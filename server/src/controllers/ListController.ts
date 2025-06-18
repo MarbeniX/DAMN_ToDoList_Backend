@@ -1,0 +1,80 @@
+import type { Request, Response } from 'express'
+import List from '../models/List'
+import Task from '../models/Task'
+
+export class ProjectController{
+    static createList = async (req: Request, res: Response) => {
+        const list = new List(req.body)
+        try{
+            await list.save()
+            res.send("Project saved")
+        }catch (error) {
+            res.status(500).json({error})
+        }
+    }
+
+
+    static getAllLists = async (req: Request, res: Response) => {
+        try{
+            const lists = await List.find()
+            res.json(lists)
+        }catch (error) {
+            res.status(500).json({ message: 'Internal server error' })
+        }
+    }
+
+    static getListById = async (req: Request, res: Response) => {
+        try{
+            const { id } = req.params
+            const list = await List.findById(id)
+            if(!list){
+                res.status(404).json({ message: 'List not found' })
+                return
+            }
+            res.json(list)
+        }catch (error) {
+            res.status(500).json({ message: 'Internal server error' })
+        }
+    }
+
+    static updateList = async (req: Request, res: Response) => {
+        try{
+            const { id } = req.params
+            const list = await List.findById(id)
+            if(!list){
+                res.status(404).json({ message: 'List not found' })
+                return
+            }
+            const updates = Object.keys(req.body)
+            const allowedUpdates = ['listName', 'description','listColor', 'category']
+            const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
+            if (!isValidOperation) {
+                res.status(400).send({ error: 'Invalid updates!' })
+                return
+            }
+            updates.forEach((update) => list[update] = req.body[update])
+            await list.save()
+            res.send("Project updated")
+        }catch (error) {
+            res.status(500).json({error})
+        }
+    }
+
+    static deleteList = async (req: Request, res: Response) => {
+        try{
+            const { id } = req.params
+            const list = await List.findById(id)
+            if(!list){
+                res.status(404).json({ message: 'List not found' })
+                return
+            }
+            await Promise.all(list.tasks.map(async (taskId) => {
+                await Task.findByIdAndDelete(taskId)
+            }))
+            await List.deleteOne()
+            res.send("Project deleted")
+        }catch(error) {
+            res.status(500).json({ message: 'Internal server error' })
+        }
+    }
+}
