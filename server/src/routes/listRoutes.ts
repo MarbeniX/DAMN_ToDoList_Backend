@@ -24,6 +24,12 @@ router.get("/",
     ProjectController.getAllLists
 )
 
+router.get("/category/:category",
+    param("category").notEmpty().withMessage("Category is required"),
+    handleInputErrors,
+    ProjectController.getAllListsByCategory
+)
+
 router.get("/:id",
     param("id").isMongoId().withMessage("Invalid ID"),
     handleInputErrors,

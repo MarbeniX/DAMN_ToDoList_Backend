@@ -21,6 +21,19 @@ export class ProjectController{
         }
     }
 
+    static getAllListsByCategory = async (req: Request, res: Response) => {
+        try{
+            const { category } = req.params
+            const lists = await List.find({ category }).select('listName description listColor')
+            if (lists.length === 0) {
+                res.status(404).json({ message: 'No lists found for this category' })
+                return
+            }
+            res.json(lists)
+        }catch (error) {
+            res.status(500).json({ message: 'Internal server error' })
+        }
+    }
 
     static getAllLists = async (req: Request, res: Response) => {
         try{
