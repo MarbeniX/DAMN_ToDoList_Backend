@@ -64,6 +64,12 @@ router.post("/:listId/tasks",
     TaskController.createTask
 )
 
+router.get("/:listId/getTasks",
+    param("listId").isMongoId().withMessage("Invalid ID"),
+    handleInputErrors,
+    TaskController.getAllTasksByList
+)
+
 router.get("/:listId/tasks",
     param("listId").isMongoId().withMessage("Invalid ID"),
     handleInputErrors,
@@ -90,6 +96,20 @@ router.delete("/:listId/tasks/:taskId",
     param("taskId").isMongoId().withMessage("Invalid ID"),
     handleInputErrors,
     TaskController.deleteTask
+)
+
+router.patch("/:listId/tasks/:taskId/completed",
+    param("listId").isMongoId().withMessage("Invalid ID"),
+    param("taskId").isMongoId().withMessage("Invalid ID"),
+    handleInputErrors,
+    TaskController.setCompletedTask
+)
+
+router.patch("/:listId/tasks/:taskId/favorite",
+    param("listId").isMongoId().withMessage("Invalid ID"),
+    param("taskId").isMongoId().withMessage("Invalid ID"),
+    handleInputErrors,
+    TaskController.setFavoriteTask
 )
 
 export default router;

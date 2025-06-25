@@ -13,7 +13,7 @@ const lvlPriorityOptions = {
     HIGH: "high",
     NORMAL: "normal",
     LOW: "low",
-    OPTINAL: "optional"
+    OPTIONAL: "optional"
 }as const
 
 export type RepeatOptions = typeof repeatOptions[keyof typeof repeatOptions];
