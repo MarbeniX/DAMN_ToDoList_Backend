@@ -5,8 +5,11 @@ import { handleInputErrors } from "../middlewares/validation";
 import { TaskController } from "../controllers/TaskController";
 import { validateListExists } from "../middlewares/list";
 import { validateTaskExists } from "../middlewares/tasks";
+import { authenticate } from "../middlewares/auth";
 
 const router = Router();
+
+router.use(authenticate )
 
 router.post("/",
     body("listName").notEmpty().withMessage("Name is required"),

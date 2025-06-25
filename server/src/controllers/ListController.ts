@@ -1,12 +1,20 @@
 import type { Request, Response } from 'express'
 import List from '../models/List'
 import Task from '../models/Task'
+import User from '../models/User'
 
 export class ProjectController{
     static createList = async (req: Request, res: Response) => {
         const list = new List(req.body)
+        const user = await User.findById(req.user._id)
+        if(!user){
+            res.status(404).json({ message: 'User not found' })
+            return
+        }
+        user.lists.push(list._id as any)
         try{
             await list.save()
+            await user.save()
             res.send("Project saved")
         }catch (error) {
             res.status(500).json({error})

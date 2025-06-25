@@ -13,8 +13,7 @@ export class AuthEmail{
             to: user.email,
             subject: 'ToDo - Confirm your email',
             text: "ToDo - Verify your email",
-            html: `Hello: ${user.name}, please confirm your email by clicking on the link:
-                <a href="${process.env.FRONTEND_URL}/auth/confirm-account">Confirm email</a>
+            html: `Hello: ${user.name}, please confirm your email typing the code:
                 <p> Add the code: <b>${user.token}</b></p>
                 <p>This token will expire in 1 hour</p>
             `
@@ -27,8 +26,7 @@ export class AuthEmail{
             to: user.email,
             subject: 'ToDo - Reset your password',
             text: "ToDo - Reset your password",        
-            html: `Hello: ${user.name}, please reset your password by clicking on the link:
-                <a href="${process.env.FRONTEND_URL}/auth/reset-password">Reset password</a>
+            html: `Hello: ${user.name}, please confirm your email typing the code:
                 <p> Add the code: <b>${user.token}</b></p>
                 <p>This token will expire in 1 hour</p>
             `

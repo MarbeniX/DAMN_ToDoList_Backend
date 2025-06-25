@@ -88,7 +88,11 @@ export class AuthController{
                 res.status(400).send({message: "Invalid credentials"})
                 return;
             }
-            const token = generateJWT({id : user.id})
+            const token = generateJWT({
+                id : user.id,
+                email: user.email,
+                username: user.username
+            })
             res.send(token)
         }catch(error){
             res.status(500).json({message: "Internal server error"})
