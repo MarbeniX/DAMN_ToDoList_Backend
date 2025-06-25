@@ -92,7 +92,12 @@ export class ProjectController{
             await Promise.all(list.tasks.map(async (taskId) => {
                 await Task.findByIdAndDelete(taskId)
             }))
-            await List.deleteOne()
+            const user = await User.findById(req.user._id)
+            user.lists = user.lists.filter((listId) => listId.toString() !== id)
+            await Promise.all([
+                user.save(),
+                List.deleteOne({ _id: id })
+            ])
             res.send("Project deleted")
         }catch(error) {
             res.status(500).json({ message: 'Internal server error' })
