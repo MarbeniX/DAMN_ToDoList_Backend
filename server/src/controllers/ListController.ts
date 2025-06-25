@@ -24,7 +24,7 @@ export class ProjectController{
     static getAllListsByCategory = async (req: Request, res: Response) => {
         try{
             const { category } = req.params
-            const lists = await List.find({ category }).select('listName description listColor')
+            const lists = await List.find({ category, owner: req.user._id }).select('listName description listColor')
             if (lists.length === 0) {
                 res.status(404).json({ message: 'No lists found for this category' })
                 return
@@ -37,7 +37,7 @@ export class ProjectController{
 
     static getAllLists = async (req: Request, res: Response) => {
         try{
-            const lists = await List.find()
+            const lists = await List.find({ owner: req.user._id }).select('listName description listColor category')
             res.json(lists)
         }catch (error) {
             res.status(500).json({ message: 'Internal server error' })
@@ -52,6 +52,10 @@ export class ProjectController{
                 res.status(404).json({ message: 'List not found' })
                 return
             }
+            if(list.owner.toString() !== req.user._id.toString()){
+                res.status(403).json({ message: 'Forbidden' })
+                return
+            }
             res.json(list)
         }catch (error) {
             res.status(500).json({ message: 'Internal server error' })
@@ -64,6 +68,10 @@ export class ProjectController{
             const list = await List.findById(id)
             if(!list){
                 res.status(404).json({ message: 'List not found' })
+                return
+            }
+            if(list.owner.toString() !== req.user._id.toString()){
+                res.status(403).json({ message: 'Forbidden' })
                 return
             }
             const updates = Object.keys(req.body)
@@ -87,6 +95,10 @@ export class ProjectController{
             const list = await List.findById(id)
             if(!list){
                 res.status(404).json({ message: 'List not found' })
+                return
+            }
+            if(list.owner.toString() !== req.user._id.toString()){
+                res.status(403).json({ message: 'Forbidden' })
                 return
             }
             await Promise.all(list.tasks.map(async (taskId) => {
